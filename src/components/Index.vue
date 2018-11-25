@@ -16,33 +16,39 @@
 </template>
 
 <script>
+import db from "@/firebase/init";
 export default {
   name: "Index",
   data() {
     return {
-      smoothies: [
-        {
-          title: "Nin brew",
-          slug: "nin-brew",
-          ingredients: ["bananas", "applee"],
-          id: 1
-        },
-        {
-          title: "milksha",
-          slug: "milkssd",
-          ingredients: ["milk", "sugar"],
-          id: 2
-        }
-      ]
+      smoothies: []
     };
   },
   methods: {
     deleteSmoothie(id) {
-      console.log(id);
-      this.smoothies = this.smoothies.filter(smoothie => {
-        return smoothie.id != id;
-      });
+      // Delete data from firestore
+      db.collection("smoothies")
+        .doc(id)
+        .delete()
+        .then(
+          (this.smoothies = this.smoothies.filter(smoothie => {
+            return smoothie.id != id;
+          }))
+        );
     }
+  },
+  // created is a life-cycle method
+  created() {
+    // Fetch data from firestore
+    db.collection("smoothies")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          let smoothie = doc.data();
+          smoothie.id = doc.id;
+          this.smoothies.push(smoothie);
+        });
+      });
   }
 };
 </script>
