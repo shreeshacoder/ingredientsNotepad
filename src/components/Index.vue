@@ -30,11 +30,11 @@ export default {
       db.collection("smoothies")
         .doc(id)
         .delete()
-        .then(
-          (this.smoothies = this.smoothies.filter(smoothie => {
+        .then(() => {
+          this.smoothies = this.smoothies.filter(smoothie => {
             return smoothie.id != id;
-          }))
-        );
+          });
+        });
     }
   },
   // created is a life-cycle method
